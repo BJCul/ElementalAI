@@ -19,8 +19,8 @@ tie_message = result_font.render("It's Tie", True, (255, 235, 193))
 won_message = result_font.render("You Won", True, (124, 252, 0))
 lost_message = result_font.render("You Lost", True, (255, 0, 0))
 
-ai_win = result_font.render("Sorry! The AI won the game.", True, (255, 0, 0))
-you_win = result_font.render("Congratulations! You won the game!", True, (124, 252, 0))
+ai_win = score_font.render("Sorry! The AI won the game.", True, (255, 0, 0))
+you_win = score_font.render("Congratulations! You won the game!", True, (124, 252, 0))
 
 score_font = pygame.font.Font('font/Roboto-Bold.ttf', 25)
 user_score_message = score_font.render("You: 0 ", True, (69, 11, 183))
@@ -183,7 +183,7 @@ while True:
     screen.blit(button_ranger, ranger_rect)
 
     if game_over:
-        screen.blit(end_result_message, (70, 200))
+        screen.blit(end_result_message, (180, 200))
         screen.blit(button_play_again, play_again_rect)
 
     pygame.display.update()
