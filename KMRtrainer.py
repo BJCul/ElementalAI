@@ -11,7 +11,8 @@ strategy_sum = []
 class CFRBot:
     def __init__(self):
         self.knight = 1
-        self.mage = 2
+        self.mage0341
+        = 2
         self.ranger = 3
         self.NUM_ACTIONS = 3
         self.regret_sum = [0] * self.NUM_ACTIONS

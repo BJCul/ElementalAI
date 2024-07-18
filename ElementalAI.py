@@ -7,12 +7,13 @@ clock = pygame.time.Clock()
 
 screen = pygame.display.set_mode((600, 400))
 pygame.display.set_caption("Elemental AI")
+base_font = 'font/PressStart2P-Regular.ttf'
 
 background_image = pygame.image.load('images/battleground_bg.jpg').convert()
-font = pygame.font.Font('font/PressStart2P-Regular.ttf', 32)
-score_font = pygame.font.Font('font/PressStart2P-Regular.ttf', 10)
-result_font = pygame.font.Font('font/PressStart2P-Regular.ttf', 20)
-label_font = pygame.font.Font('font/PressStart2P-Regular.ttf', 15)  # Smaller font for the label
+font = pygame.font.Font(base_font, 32)
+score_font = pygame.font.Font(base_font, 10)
+result_font = pygame.font.Font(base_font, 20)
+label_font = pygame.font.Font(base_font, 15)  # Smaller font for the label
 
 play_message = font.render("ELEMENTAL AI", True, (89, 75, 1))
 play_message2 = score_font.render("Pick a troupe you want to send", True, (89, 75, 1))
@@ -69,12 +70,16 @@ comp_health = 100
 user_health = 100
 is_battle_sound_playing = False
 game_over = False
+user_combo_count = 0
+ai_combo_count = 0
+user_damage = 0
+ai_damage = 0
 
 bot = CFRBot()
 bot.train(1000000)
 
 def reset_game():
-    global is_started, usear_weapon, comp_weapon, is_user_weapon, is_show_weapon, user_weapon_text, comp_weapon_text, result_message, comp_health, user_health, game_over
+    global is_started, usear_weapon, comp_weapon, is_user_weapon, is_show_weapon, user_weapon_text, comp_weapon_text, result_message, comp_health, user_health, game_over, user_combo_count, ai_combo_count, user_damage, ai_damage
     is_started = False
     usear_weapon = None
     comp_weapon = None
@@ -86,6 +91,10 @@ def reset_game():
     comp_health = 100
     user_health = 100
     game_over = False
+    user_combo_count = 0
+    ai_combo_count = 0
+    user_damage = 0
+    ai_damage = 0
 
 def pick_weapon(user_weapon_index):
     global is_started, usear_weapon, comp_weapon, is_user_weapon, is_show_weapon, user_weapon_text, comp_weapon_text, battle_show_picture, battle_show_sound
@@ -114,13 +123,21 @@ def check_game_over():
         end_result_message = you_win
         game_over = True
 
-def draw_health_bar(x, y, health, label):
+def draw_health_bar(x, y, health, label, damage, align):
     pygame.draw.rect(screen, (255, 0, 0), (x, y, 200, 20))
     pygame.draw.rect(screen, (0, 255, 0), (x, y, 200 * (health / 100), 20))
     health_text = score_font.render(f"{int(health)}%", True, (255, 69, 69))
     label_text = label_font.render(label, True, (247, 229, 213))
     screen.blit(health_text, (x, y + 20))  # Left-align the percentage below the health bar
     screen.blit(label_text, (x, y - 20))   # Left-align the label above the health bar
+
+    # Display damage dealt only if damage is greater than zero
+    if damage > 0:
+        damage_text = score_font.render(f"{damage}hp", True, (237, 0, 0))
+        if align == 'left':
+            screen.blit(damage_text, (x + 260, y))  # Display damage to the right of the health bar
+        else:
+            screen.blit(damage_text, (x - 100, y))  # Display damage to the left of the health bar
 
 while True:
     for event in pygame.event.get():
@@ -140,8 +157,8 @@ while True:
                     pick_weapon(2)
 
     screen.blit(background_image, (0, 0))
-    draw_health_bar(50, 30, user_health, "You")
-    draw_health_bar(350, 30, comp_health, "AI")
+    draw_health_bar(50, 30, user_health, "You", ai_damage, 'left')
+    draw_health_bar(350, 30, comp_health, "AI", user_damage, 'right')
 
     if not is_started:
         screen.blit(play_message, (120, 150))
@@ -158,26 +175,85 @@ while True:
 
     if is_user_weapon:
         is_show_weapon = True
+        user_damage = 0
+        ai_damage = 0
+
         if comp_weapon_text == user_weapon_text:
             result_message = tie_message
+            user_combo_count = 0
+            ai_combo_count = 0
         elif user_weapon_text == "R" and comp_weapon_text == "P":
             result_message = lost_message
-            user_health -= 5
+            user_health -= 10
+            user_damage = 10
+            user_combo_count = 0
+            ai_combo_count += 1
+            if ai_combo_count >= 5:
+                user_health -= 20  # additional 20 damage for a total of 30
+                user_damage = 30
+            elif ai_combo_count >= 3:
+                user_health -= 10  # additional 10 damage for a total of 20
+                user_damage = 20
         elif user_weapon_text == "R" and comp_weapon_text == "S":
             result_message = won_message
-            comp_health -= 5
+            comp_health -= 10
+            ai_damage = 10
+            ai_combo_count = 0
+            user_combo_count += 1
+            if user_combo_count >= 5:
+                comp_health -= 20  # additional 20 damage for a total of 30
+                ai_damage = 30
+            elif user_combo_count >= 3:
+                comp_health -= 10  # additional 10 damage for a total of 20
+                ai_damage = 20
         elif user_weapon_text == "S" and comp_weapon_text == "R":
             result_message = lost_message
-            user_health -= 5
+            user_health -= 10
+            user_damage = 10
+            user_combo_count = 0
+            ai_combo_count += 1
+            if ai_combo_count >= 5:
+                user_health -= 20  # additional 20 damage for a total of 30
+                user_damage = 30
+            elif ai_combo_count >= 3:
+                user_health -= 10  # additional 10 damage for a total of 20
+                user_damage = 20
         elif user_weapon_text == "S" and comp_weapon_text == "P":
             result_message = won_message
-            comp_health -= 5
+            comp_health -= 10
+            ai_damage = 10
+            ai_combo_count = 0
+            user_combo_count += 1
+            if user_combo_count >= 5:
+                comp_health -= 20  # additional 20 damage for a total of 30
+                ai_damage = 30
+            elif user_combo_count >= 3:
+                comp_health -= 10  # additional 10 damage for a total of 20
+                ai_damage = 20
         elif user_weapon_text == "P" and comp_weapon_text == "R":
             result_message = won_message
-            comp_health -= 5
+            comp_health -= 10
+            ai_damage = 10
+            ai_combo_count = 0
+            user_combo_count += 1
+            if user_combo_count >= 5:
+                comp_health -= 20  # additional 20 damage for a total of 30
+                ai_damage = 30
+            elif user_combo_count >= 3:
+                comp_health -= 10  # additional 10 damage for a total of 20
+                ai_damage = 20
         elif user_weapon_text == "P" and comp_weapon_text == "S":
             result_message = lost_message
-            user_health -= 5
+            user_health -= 10
+            user_damage = 10
+            user_combo_count = 0
+            ai_combo_count += 1
+            if ai_combo_count >= 5:
+                user_health -= 20  # additional 20 damage for a total of 30
+                user_damage = 30
+            elif ai_combo_count >= 3:
+                user_health -= 10  # additional 10 damage for a total of 20
+                user_damage = 20
 
         check_game_over()
 
