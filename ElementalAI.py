@@ -9,17 +9,17 @@ screen = pygame.display.set_mode((600, 400))
 pygame.display.set_caption("Elemental AI")
 
 background_image = pygame.image.load('images/battleground_bg.jpg').convert()
-font = pygame.font.Font('font/Roboto-Bold.ttf', 53)
-score_font = pygame.font.Font('font/Roboto-Regular.ttf', 20)
-result_font = pygame.font.Font('font/Roboto-Bold.ttf', 35)
-label_font = pygame.font.Font('font/Roboto-Regular.ttf', 15)  # Smaller font for the label
+font = pygame.font.Font('font/PressStart2P-Regular.ttf', 32)
+score_font = pygame.font.Font('font/PressStart2P-Regular.ttf', 10)
+result_font = pygame.font.Font('font/PressStart2P-Regular.ttf', 20)
+label_font = pygame.font.Font('font/PressStart2P-Regular.ttf', 15)  # Smaller font for the label
 
 play_message = font.render("ELEMENTAL AI", True, (89, 75, 1))
 play_message2 = score_font.render("Pick a troupe you want to send", True, (89, 75, 1))
 
-tie_message = result_font.render("It's Tie", True, (255, 235, 193))
-won_message = result_font.render("You Won", True, (124, 252, 0))
-lost_message = result_font.render("You Lost", True, (255, 0, 0))
+tie_message = result_font.render("It's Tie", True, (186, 141, 19))
+won_message = result_font.render("You Won", True, (32, 156, 12))
+lost_message = result_font.render("You Lost", True, (153, 20, 15))
 
 ai_win = score_font.render("Sorry! The AI won the game.", True, (255, 0, 0))
 you_win = score_font.render("Congratulations! You won the game!", True, (124, 252, 0))
@@ -37,16 +37,16 @@ button_mage = pygame.transform.scale(button_mage, (button_width, button_height))
 button_ranger = pygame.transform.scale(button_ranger, (button_width, button_height))
 button_play_again = pygame.transform.scale(button_play_again, (play_again_button_width, play_again_button_height))
 
-knight_rect = button_knight.get_rect(topleft=(50, 300))
-mage_rect = button_knight.get_rect(topleft=(235, 300))
-ranger_rect = button_ranger.get_rect(topleft=(420, 300))
+knight_rect = button_knight.get_rect(topleft=(50, 350))
+mage_rect = button_knight.get_rect(topleft=(235, 350))
+ranger_rect = button_ranger.get_rect(topleft=(420, 350))
 play_again_rect = button_play_again.get_rect(topleft=(225, 250))
 
 knight = pygame.image.load('images/10.png')
 mage = pygame.image.load('images/12.png')
 ranger = pygame.image.load('images/11.png')
 
-image_width, image_height = 180, 200
+image_width, image_height = 180, 249
 knight = pygame.transform.scale(knight, (image_width, image_height))
 mage = pygame.transform.scale(mage, (image_width, image_height))
 ranger = pygame.transform.scale(ranger, (image_width, image_height))
@@ -148,8 +148,8 @@ while True:
         screen.blit(play_message2, (160, 250))
 
     if is_show_weapon:
-        screen.blit(usear_weapon, (20, 70))
-        screen.blit(comp_weapon, (400, 60))
+        screen.blit(usear_weapon, (20, 85))
+        screen.blit(comp_weapon, (400, 85))
         if is_show_weapon and battle_show_picture is not None:
             screen.blit(battle_show_picture, (230, 150))
 
